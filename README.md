@@ -1,3 +1,3 @@
-## Created at 18 Jan 2025
+# Handson Panggabean Portfolio (Server-side)
 
-# Handson Panggabean's server
+This [Portfolio Project](https://handson-panggabean-projects.firebaseapp.com/) server was deployed using [Heroku](https://www.heroku.com/)
