@@ -4,7 +4,8 @@
   "description": "# Handson Panggabean's server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=development nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -16,5 +17,13 @@
   "bugs": {
     "url": "https://github.com/HandsonPanggabean/handson-panggabean-server/issues"
   },
-  "homepage": "https://github.com/HandsonPanggabean/handson-panggabean-server#readme"
+  "homepage": "https://github.com/HandsonPanggabean/handson-panggabean-server#readme",
+  "devDependencies": {
+    "dotenv": "^16.4.7",
+    "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
 }
