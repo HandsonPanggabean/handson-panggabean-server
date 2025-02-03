@@ -30,6 +30,10 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.get("/test", (req, res) => {
+  res.status(200).send({ name: "Handson Panggabean", success: true });
+});
+
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
