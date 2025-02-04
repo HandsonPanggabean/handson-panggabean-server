@@ -1,4 +1,4 @@
-require("dotenv").config({ path: `./.env.${process.env.NODE_ENV}` });
+require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
@@ -27,12 +27,11 @@ const app = express();
 
 app.use(cors(corsOptions));
 
+const routers = require("./routers");
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-app.get("/test", (req, res) => {
-  res.status(200).send({ name: "Handson Panggabean", success: true });
-});
+app.use(routers);
 
 const PORT = process.env.PORT;
 
