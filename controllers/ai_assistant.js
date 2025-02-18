@@ -8,9 +8,10 @@ const model = genAI.getGenerativeModel({
 class AIAssistantController {
   static generateFirstChat = async (req, res) => {
     try {
-      const prompt = `Introduce yourself as Handson's AI assistant powered by Google and ask them is there any you can help ${
-        req.body.lang === "id" ? "in Bahasa Indonesia" : "in English"
-      }`;
+      const prompt =
+        req.body.lang === "id"
+          ? "Perkenalkan dirimu sebagai Handson AI asisten yang didukung oleh Google, dan tanya apakah ada yang sesuatu yang bisa kamu bantu"
+          : "Introduce yourself as Handson's AI assistant powered by Google and ask them is there any you can help";
 
       const result = await model.generateContent(prompt);
       const response = await result.response.text();
