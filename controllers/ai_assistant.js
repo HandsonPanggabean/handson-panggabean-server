@@ -9,7 +9,7 @@ class AIAssistantController {
   static generateFirstChat = async (req, res) => {
     try {
       const prompt = `Introduce yourself as Handson's AI assistant powered by Google and ask them is there any you can help ${
-        req.body.lang === "id" ? "using Bahasa Indonesia" : ""
+        req.body.lang === "id" ? "in Bahasa Indonesia" : "in English"
       }`;
 
       const result = await model.generateContent(prompt);
