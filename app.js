@@ -6,6 +6,7 @@ const cors = require("cors");
 const whitelist = [
   "http://localhost:3000",
   "https://handson-panggabean-projects.firebaseapp.com",
+  "https://handson-panggabean-projects.web.app",
 ];
 
 const corsOptions = {
