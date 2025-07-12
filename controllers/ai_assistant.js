@@ -3,6 +3,10 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.AI_ASSISTANT_API_KEY);
 const model = genAI.getGenerativeModel({
   model: process.env.AI_ASSISTANT_MODEL,
+  generationConfig: {
+    temperature: 0.2,
+    maxOutputTokens: 100,
+  }
 });
 
 class AIAssistantController {
