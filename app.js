@@ -34,6 +34,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(routers);
 
+app.get("/keep-server-alive", async (req, res) => {
+  try {
+    res.status(200).send({ success: true, message: "Server's good to go" });
+  } catch (err) {
+    console.log(err, "err <<<");
+  }
+});
+
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
