@@ -1,5 +1,8 @@
 const { GoogleGenAI } = require("@google/genai");
 
+// Helpers
+const { parseAIError } = require("../helpers/ai_error_handler");
+
 const getAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
 // const model = getAI.getGenerativeModel({
 //   model: process.env.AI_ASSISTANT_MODEL,
@@ -28,11 +31,8 @@ class AIAssistantController {
 
       res.status(200).send({ success: true, text: result.text });
     } catch (err) {
-      console.log("error: ", err.message);
-      res.status(500).send({
-        success: false,
-        message: err.message,
-      });
+      const aiError = parseAIError(err);
+      res.status(aiError.status).send(aiError.response);
     }
   };
 
@@ -40,20 +40,30 @@ class AIAssistantController {
     try {
       const result = await getAI.models.generateContent({
         model: process.env.AI_ASSISTANT_MODEL,
-        contents: req.body.message,
+        contents: [
+          {
+            role: "system",
+            parts: [
+              {
+                text: "You are a concise assistant. Keep answers under 2 sentences unless asked otherwise.",
+              },
+            ],
+          },
+          {
+            role: "user",
+            parts: [{ text: req.body.message }],
+          },
+        ],
         generationConfig: {
           temperature: 0.2,
-          maxOutputTokens: 100,
+          maxOutputTokens: 80,
         },
       });
 
       res.status(201).send({ success: true, text: result.text });
     } catch (err) {
-      console.log("error: ", err.message);
-      res.status(500).send({
-        success: false,
-        message: err.message,
-      });
+      const aiError = parseAIError(err);
+      res.status(aiError.status).send(aiError.response);
     }
   };
 }
