@@ -38,12 +38,8 @@ app.get("/check-server-status", async (req, res) => {
   try {
     res.status(200).send({ success: true, message: "Server's good to go" });
   } catch (err) {
-    res.status(500).send({message: "Server is currently sleeping..."})
+    res.status(500).send({ message: "Server is currently sleeping..." });
   }
 });
 
-const PORT = process.env.PORT;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port: ${PORT}`);
-});
+module.exports = app;
