@@ -38,30 +38,31 @@ class AIAssistantController {
 
   static talkToAssistant = async (req, res) => {
     try {
-      const result = await getAI.models.generateContent({
-        model: process.env.AI_ASSISTANT_MODEL,
+      const result = await this.generateWithRetry(() =>
+        getAI.models.generateContent({
+          model: process.env.AI_ASSISTANT_MODEL,
 
-        systemInstruction: {
-          parts: [
+          systemInstruction: {
+            parts: [
+              {
+                text: "You are a concise assistant. Keep answers under 2 sentences unless asked otherwise.",
+              },
+            ],
+          },
+
+          contents: [
             {
-              text: "You are a concise assistant. Keep answers under 2 sentences unless asked otherwise.",
+              role: "user",
+              parts: [{ text: req.body.message }],
             },
           ],
-        },
 
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: req.body.message }],
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 80,
           },
-        ],
-
-        generationConfig: {
-          temperature: 0.2,
-          maxOutputTokens: 80,
-        },
-      });
-
+        })
+      );
       res.status(201).send({
         success: true,
         text: result.text,
@@ -69,6 +70,22 @@ class AIAssistantController {
     } catch (err) {
       const aiError = parseAIError(err);
       res.status(aiError.status).send(aiError.response);
+    }
+  };
+
+  static generateWithRetry = async (fn, retries = 3) => {
+    try {
+      return await fn();
+    } catch (err) {
+      const status =
+        err?.status || err?.error?.status || err?.response?.error?.status;
+
+      if (status === "UNAVAILABLE" && retries > 0) {
+        await new Promise((r) => setTimeout(r, 800));
+        return this.generateWithRetry(fn, retries - 1);
+      }
+
+      throw err;
     }
   };
 }
