@@ -40,27 +40,32 @@ class AIAssistantController {
     try {
       const result = await getAI.models.generateContent({
         model: process.env.AI_ASSISTANT_MODEL,
+
+        systemInstruction: {
+          parts: [
+            {
+              text: "You are a concise assistant. Keep answers under 2 sentences unless asked otherwise.",
+            },
+          ],
+        },
+
         contents: [
-          {
-            role: "system",
-            parts: [
-              {
-                text: "You are a concise assistant. Keep answers under 2 sentences unless asked otherwise.",
-              },
-            ],
-          },
           {
             role: "user",
             parts: [{ text: req.body.message }],
           },
         ],
+
         generationConfig: {
           temperature: 0.2,
           maxOutputTokens: 80,
         },
       });
 
-      res.status(201).send({ success: true, text: result.text });
+      res.status(201).send({
+        success: true,
+        text: result.text,
+      });
     } catch (err) {
       const aiError = parseAIError(err);
       res.status(aiError.status).send(aiError.response);
