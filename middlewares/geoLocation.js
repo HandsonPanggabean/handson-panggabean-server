@@ -1,6 +1,9 @@
 const geoip = require("geoip-lite");
 const moment = require("moment");
 
+// Helpers
+const { getCountryName } = require("../helpers/get_country_name");
+
 function getClientIp(req) {
   let ip =
     req.headers["x-forwarded-for"]?.split(",")[0] ||
@@ -31,16 +34,6 @@ module.exports = function geoLocation(req, res, next) {
 
   const geo = isPublicIp(ip) ? geoip.lookup(ip) : null;
 
-  let mapsUrl = "";
-  let latt;
-  let lngt;
-  if (geo?.ll) {
-    const [lat, lng] = geo.ll;
-    latt = lat + 7.3213;
-    lngt = lng - 3.6231;
-    mapsUrl = `https://www.google.com/maps?q=${latt},${lngt}`;
-  }
-
   const timestamp = new Date();
 
   res.on("finish", () => {
@@ -49,9 +42,7 @@ module.exports = function geoLocation(req, res, next) {
         req.originalUrl
       } - Status: ${res.statusCode} ${
         geo?.country
-          ? `- H: ${geo.country || ""}, P: ${geo.city || ""} ${
-              latt && lngt ? `(${latt} ${lngt}) Maps: ${mapsUrl}` : ""
-            }`
+          ? `- C: ${getCountryName(geo.country) || ""}, P: ${geo.city || ""}`
           : "- VPN / Internal Visitor"
       }`
     );
