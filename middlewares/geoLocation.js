@@ -1,4 +1,4 @@
-const maxmind = require("@maxmind/geoip2-node");
+const maxmind = require("maxmind");
 const moment = require("moment");
 const path = require("path");
 

@@ -1,9 +1,11 @@
+require("dotenv").config();
+
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
-const geoipDir = path.join(__dirname, "../geoip");
-const dbPath = path.join(__dirname, "../geoip/GeoLite2-City.mmdb");
+const geoipDir = path.join(process.cwd(), "geoip");
+const dbPath = path.join(process.cwd(), process.env.MAXMIND_PATH);
 
 if (!fs.existsSync(geoipDir)) {
   fs.mkdirSync(geoipDir, { recursive: true });
