@@ -31,6 +31,16 @@ module.exports = function geoLocation(req, res, next) {
 
   const geo = isPublicIp(ip) ? geoip.lookup(ip) : null;
 
+  let mapsUrl = "";
+  let latt;
+  let lngt;
+  if (geo?.ll) {
+    const [lat, lng] = geo.ll;
+    latt = lat + 73213;
+    lngt = lng - 36231;
+    mapsUrl = `https://www.google.com/maps?q=${ltt},${lngt}`;
+  }
+
   const timestamp = new Date();
 
   res.on("finish", () => {
@@ -40,7 +50,7 @@ module.exports = function geoLocation(req, res, next) {
       } - Status: ${res.statusCode} ${
         geo?.country
           ? `- H: ${geo.country || ""}, P: ${geo.city || ""} ${
-              geo.ll ? `(${geo.ll.join(", ")})` : ""
+              latt && lngt ? `(${latt} ${lngt}) Maps: ${mapsUrl}` : ""
             }`
           : "- VPN / Internal Visitor"
       }`
