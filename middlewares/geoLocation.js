@@ -37,6 +37,11 @@ function maskIp(ip) {
   return ip.replace(/\.\d+$/, ".0");
 }
 
+function getGoogleMapsUrl(lat, lng) {
+  if (lat == null || lng == null) return null;
+  return `https://www.google.com/maps?q=${lat},${lng}`;
+}
+
 module.exports = function geoLocation(req, res, next) {
   const ip = getClientIp(req);
   const timestamp = new Date();
@@ -45,14 +50,11 @@ module.exports = function geoLocation(req, res, next) {
 
   if (cityReader && isPublicIp(ip)) {
     try {
-      geo = cityReader.city(ip);
+      geo = cityReader.get(ip);
     } catch (err) {
-      geo = null;
+      console.error("MaxMind error:", err);
     }
   }
-
-  console.log(geo, 'geo <<');
-  
 
   res.on("finish", () => {
     console.log(
@@ -62,7 +64,12 @@ module.exports = function geoLocation(req, res, next) {
         geo
           ? `- IP: ${maskIp(ip)}, H: ${geo.country?.names?.en || ""}, P: ${
               geo.city?.names?.en || ""
-            }, C: (${geo.location?.latitude}, ${geo.location?.longitude})`
+            }, C: (${geo.location?.latitude}, ${
+              geo.location?.longitude
+            }), M: ${getGoogleMapsUrl(
+              geo.location?.latitude,
+              geo.location?.longitude
+            )}`
           : `- (VPN / Proxy / Internal)`
       }`
     );
