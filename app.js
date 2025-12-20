@@ -26,12 +26,15 @@ const corsOptions = {
 
 const app = express();
 
+app.set("trust proxy", true);  
 app.use(cors(corsOptions));
 
+const geoLocation = require("./middlewares/geoLocation");
 const routers = require("./routers");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(geoLocation);
 app.use(routers);
 
 app.get("/check-server-status", async (req, res) => {
