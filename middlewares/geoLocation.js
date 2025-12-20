@@ -42,7 +42,9 @@ module.exports = function geoLocation(req, res, next) {
         req.originalUrl
       } - Status: ${res.statusCode} ${
         geo?.country
-          ? `- C: ${getCountryName(geo.country) || ""}, P: ${geo.city || ""}`
+          ? `- H: ${getCountryName(geo.country) || ""}, P: ${geo.city || ""}, ${
+              geo.ll ? `C: (${geo.ll.join(", ")})` : ""
+            }`
           : "- VPN / Internal Visitor"
       }`
     );
