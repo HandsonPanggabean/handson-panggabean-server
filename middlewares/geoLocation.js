@@ -1,19 +1,22 @@
-const geoip = require("geoip-lite");
+const maxmind = require("@maxmind/geoip2-node");
 const moment = require("moment");
+const path = require("path");
 
-// Helpers
-const { getCountryName } = require("../helpers/get_country_name");
+let cityReader;
+
+// Load DB once (VERY IMPORTANT for performance)
+(async () => {
+  cityReader = await maxmind.open(
+    path.join(process.cwd(), process.env.MAXMIND_PATH)
+  );
+})();
 
 function getClientIp(req) {
-  let ip =
-    req.headers["x-forwarded-for"]?.split(",")[0] ||
-    req.socket.remoteAddress ||
-    "";
+  //   let ip =
+  //     req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip || "";
+  let ip = req.ip || "";
 
-  // Convert IPv6-mapped IPv4 to IPv4
-  if (ip.startsWith("::ffff:")) {
-    ip = ip.slice(7);
-  }
+  if (ip.startsWith("::ffff:")) ip = ip.slice(7);
 
   return ip;
 }
@@ -29,24 +32,38 @@ function isPublicIp(ip) {
   );
 }
 
+function maskIp(ip) {
+  if (!ip) return "";
+  return ip.replace(/\.\d+$/, ".0");
+}
+
 module.exports = function geoLocation(req, res, next) {
-  const ip = req.ip;
-  //   const ip = getClientIp(req);
-
-  const geo = isPublicIp(ip) ? geoip.lookup(ip) : null;
-
+  const ip = getClientIp(req);
   const timestamp = new Date();
+
+  let geo = null;
+
+  if (cityReader && isPublicIp(ip)) {
+    try {
+      geo = cityReader.city(ip);
+    } catch (err) {
+      geo = null;
+    }
+  }
+
+  console.log(geo, 'geo <<');
+  
 
   res.on("finish", () => {
     console.log(
       `[${moment(timestamp).format("YYYY-MM-DD HH:mm:ss")}] ${req.method} ${
         req.originalUrl
       } - Status: ${res.statusCode} ${
-        geo?.country
-          ? `- H: ${getCountryName(geo.country) || ""}, P: ${geo.city || ""}, ${
-              geo.ll ? `C: (${geo.ll.join(", ")})` : ""
-            } - IP: ${ip}`
-          : `- IPv6 / VPN / Unknown`
+        geo
+          ? `- IP: ${maskIp(ip)}, H: ${geo.country?.names?.en || ""}, P: ${
+              geo.city?.names?.en || ""
+            }, C: (${geo.location?.latitude}, ${geo.location?.longitude})`
+          : `- (VPN / Proxy / Internal)`
       }`
     );
   });
