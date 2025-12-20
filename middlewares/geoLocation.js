@@ -36,8 +36,8 @@ module.exports = function geoLocation(req, res, next) {
   let lngt;
   if (geo?.ll) {
     const [lat, lng] = geo.ll;
-    latt = lat + 73213;
-    lngt = lng - 36231;
+    latt = lat + 7.3213;
+    lngt = lng - 3.6231;
     mapsUrl = `https://www.google.com/maps?q=${latt},${lngt}`;
   }
 
