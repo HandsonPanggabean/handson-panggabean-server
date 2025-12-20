@@ -38,7 +38,7 @@ module.exports = function geoLocation(req, res, next) {
     const [lat, lng] = geo.ll;
     latt = lat + 73213;
     lngt = lng - 36231;
-    mapsUrl = `https://www.google.com/maps?q=${ltt},${lngt}`;
+    mapsUrl = `https://www.google.com/maps?q=${latt},${lngt}`;
   }
 
   const timestamp = new Date();
