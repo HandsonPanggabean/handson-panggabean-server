@@ -20,13 +20,13 @@
   },
   "homepage": "https://github.com/HandsonPanggabean/handson-panggabean-server#readme",
   "devDependencies": {
-    "dotenv": "^16.4.7",
     "nodemon": "^3.1.9"
   },
   "dependencies": {
     "@google/genai": "^1.31.0",
     "@google/generative-ai": "^0.21.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "geoip-lite": "^1.4.10",
     "maxmind": "^5.0.1",
