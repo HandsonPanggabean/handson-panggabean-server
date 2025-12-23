@@ -58,18 +58,18 @@ module.exports = function geoLocation(req, res, next) {
 
   res.on("finish", () => {
     console.log(
-      `[${moment(timestamp).format("YYYY-MM-DD HH:mm:ss")}] ${req.method} ${
-        req.originalUrl
-      } - Status: ${res.statusCode} ${
+      `[${moment(timestamp).utcOffset(7).format("YYYY-MM-DD HH:mm:ss")}] ${
+        req.method
+      } ${req.originalUrl} - Status: ${res.statusCode} ${
         geo
-          ? `- IP: ${maskIp(ip)}, H: ${geo.country?.names?.en || ""}, P: ${
+          ? `H: ${geo.country?.names?.en || ""}, P: ${
               geo.city?.names?.en || ""
             }, C: (${geo.location?.latitude}, ${
               geo.location?.longitude
             }), M: ${getGoogleMapsUrl(
               geo.location?.latitude,
               geo.location?.longitude
-            )}`
+            )}, - I: ${ip}`
           : `- (VPN / Proxy / Internal)`
       }`
     );
